@@ -26,6 +26,7 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 # print(f"- Volume level: {volume.GetMasterVolumeLevel()} dB")
 # print(f"- Volume range: {volume.GetVolumeRange()[0]} dB - {volume.GetVolumeRange()[1]} dB")
 # volume.SetMasterVolumeLevel(-20.0, None)
+
 volRange = volume.GetVolumeRange()
 volume.SetMasterVolumeLevel(0,None)
 
