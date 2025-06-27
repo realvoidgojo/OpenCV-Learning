@@ -16,16 +16,16 @@ def main():
     cap.set(4,hCam)
     overlayList = []
     folderPath = "images"
+    fingerCount = ""
 
     myList = os.listdir(folderPath)
     for imPath in myList:
         image = cv2.imread(f"{folderPath}/{imPath}")
         overlayList.append(image)
+        print(f"{folderPath}/{imPath}")
     
     tipIds = [4,8,12,16,20]
 
-    # print(len(overlayList))
-    
     detector = HTM.handDetector(detectionCon=0.7)
     while True:
         success, img = cap.read()
@@ -39,8 +39,8 @@ def main():
 
         if len(lmList) != 0:
             fingers = []
-
-            if lmList[tipIds[0]][1] < lmList[tipIds[0]-1][1]:
+            
+            if lmList[tipIds[0]][1] > lmList[tipIds[0]-1][1]:  
                 fingers.append(1)
             else:
                 fingers.append(0)
@@ -51,17 +51,20 @@ def main():
                 else:
                     fingers.append(0)
                     
-            fingerCount = sum(fingers)
+            fingerCount = fingers.count(1)
 
-            if 0<= fingerCount <= len(overlayList):
-                h,w,_ = overlayList[0].shape
-                img[0:h,0:w] = overlayList[fingerCount-1]
+            if fingerCount >= 0 and fingerCount < len(overlayList):
+                overlay_index = 5 if fingerCount == 0 else fingerCount - 1
+                h,w,_ = overlayList[overlay_index].shape
+                img[0:h,0:w] = overlayList[overlay_index]
+                cv2.putText(img, str(fingerCount), (50, 300), cv2.FONT_HERSHEY_PLAIN, 5,
+                            (255, 0, 255), 5)
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
 
-        cv2.putText(img, f"{str(int(fps))} FPS", (1100, 70), cv2.FONT_HERSHEY_PLAIN, 3,
+        cv2.putText(img, f"{str(int(fps))} FPS", (400, 70), cv2.FONT_HERSHEY_PLAIN, 3,
                     (255, 0, 255), 3)
         cv2.imshow("Image", img)
         if cv2.waitKey(1) & 0xff == ord("q"):
