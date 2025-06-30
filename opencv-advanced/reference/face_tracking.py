@@ -2,7 +2,7 @@ import cv2
 
 face_cascade = cv2.CascadeClassifier("haar_face.xml")
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
 
 tracker = None
 tracking = None
